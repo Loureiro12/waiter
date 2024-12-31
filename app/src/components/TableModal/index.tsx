@@ -15,6 +15,12 @@ interface TableModalProps {
 export function TableModal({ visable, onClose, onSave }: TableModalProps) {
   const [table, setTable] = useState("");
 
+  function handleSaveTable(table: string) {
+    setTable("");
+    onSave(table);
+    onClose();
+  }
+
   return (
     <Modal transparent visible={visable} animationType="fade">
       <Overlay behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>
@@ -35,7 +41,10 @@ export function TableModal({ visable, onClose, onSave }: TableModalProps) {
               onChangeText={setTable}
             />
 
-            <Button disabled={table.length === 0} onPress={() => onSave(table)}>
+            <Button
+              disabled={table.length === 0}
+              onPress={() => handleSaveTable(table)}
+            >
               Salvar
             </Button>
           </Form>
