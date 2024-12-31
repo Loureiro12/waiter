@@ -8,6 +8,8 @@ import {
   FooterConteiner,
 } from "./styles";
 import { Categories } from "../components/Categories";
+import { Button } from "../components/Button";
+import { Menu } from "../components/Menu";
 
 export function Main() {
   return (
@@ -19,10 +21,14 @@ export function Main() {
           <Categories />
         </CategoriesContainer>
 
-        <MenuContainer />
+        <MenuContainer >
+          <Menu />
+        </MenuContainer>
       </Container>
       <Footer>
-        <FooterConteiner />
+        <FooterConteiner>
+          <Button>Novo Pedido</Button>
+        </FooterConteiner>
       </Footer>
     </>
   );
