@@ -19,20 +19,40 @@ import ImageMock from "../../assets/imagem-background.png";
 import React from "react";
 import { Button } from "../Button";
 import { Product } from "../../types/Product";
+import { OrderConfirmedModal } from "../OrderConfirmedModal";
 
 interface CartProps {
   cartItems: CartItem[];
   onAdd: (product: Product) => void;
   onDecrement: (product: Product) => void;
+  onConfirmOrder: () => void;
 }
 
-export function Cart({ cartItems, onAdd, onDecrement }: CartProps) {
+export function Cart({
+  cartItems,
+  onAdd,
+  onDecrement,
+  onConfirmOrder,
+}: CartProps) {
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [isLoading] = React.useState(false);
+
   const total = cartItems.reduce((acc, item) => {
     return acc + item.product.price * item.quantity;
   }, 0);
 
+  const handleConfirmOrder = () => {
+    setIsModalVisible(true);
+  };
+
+  function handleOk() {
+    onConfirmOrder();
+    setIsModalVisible(false);
+  }
+
   return (
     <>
+      <OrderConfirmedModal visible={isModalVisible} onClose={handleOk} />
       {cartItems.length > 0 && (
         <FlatList
           data={cartItems}
@@ -97,7 +117,13 @@ export function Cart({ cartItems, onAdd, onDecrement }: CartProps) {
           )}
         </TotalContainer>
 
-        <Button disabled={cartItems.length === 0}>Confirmar pedido</Button>
+        <Button
+          disabled={cartItems.length === 0}
+          onPress={handleConfirmOrder}
+          loading={isLoading}
+        >
+          Confirmar pedido
+        </Button>
       </Summary>
     </>
   );
