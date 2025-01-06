@@ -20,12 +20,15 @@ import React from "react";
 import { Button } from "../Button";
 import { Product } from "../../types/Product";
 import { OrderConfirmedModal } from "../OrderConfirmedModal";
+import { products } from "../../mocks/products";
+import { api } from "../../utils/api";
 
 interface CartProps {
   cartItems: CartItem[];
   onAdd: (product: Product) => void;
   onDecrement: (product: Product) => void;
   onConfirmOrder: () => void;
+  selectedTable: string;
 }
 
 export function Cart({
@@ -33,15 +36,27 @@ export function Cart({
   onAdd,
   onDecrement,
   onConfirmOrder,
+  selectedTable,
 }: CartProps) {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [isLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const total = cartItems.reduce((acc, item) => {
     return acc + item.product.price * item.quantity;
   }, 0);
 
-  const handleConfirmOrder = () => {
+  async function handleConfirmOrder() {
+    setIsLoading(true)
+    const payload = {
+      table: selectedTable,
+      products: cartItems.map((item) => ({
+        product: item.product._id,
+        quantity: item.quantity,
+      }))
+    }
+
+    await api.post("/orders", payload);
+    setIsLoading(false);
     setIsModalVisible(true);
   };
 
@@ -66,7 +81,7 @@ export function Cart({
                   source={
                     item.product?.imagePath
                       ? {
-                          uri: `http://192.168.100.72:8081/uploads/${item.product?.imagePath}`,
+                          uri: `http://localhost:3001/uploads/${item.product?.imagePath}`,
                         }
                       : ImageMock
                   }
